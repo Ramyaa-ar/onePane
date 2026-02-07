@@ -1,9 +1,111 @@
-import Image from "next/image";
+"use client";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
-export default function Home() {
+
+export default  function Home() {
+  const [jsonInput, setJsonInput] = useState("");
+  const [prompt, setPrompt] = useState("");
+  const [error, setError] = useState("");
+  const [htmlOutput, setHtmlOutput] = useState("");
+  const handleGenerate = async () => {
+    try {
+      setError("");
+      JSON.parse(jsonInput);
+
+      const res = await fetch("/api/generate",{
+        method: "POST",
+        headers:{
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ jsonInput, prompt }),
+      })
+      const data = await res.json();
+      if (!res.ok) {
+      throw new Error(data.error);
+    }
+
+    setHtmlOutput(data.html);
+    } catch (error:any) {
+      setError(error.message);
+    }
+  };
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <h1> hello</h1>
-    </div>
+    <main className="min-h-screen bg-zinc-100 p-8">
+      <div className="max-w-5xl mx-auto space-y-8">
+        <div className="text-center mb-6">
+          <h1 className="text-4xl font-bold tracking-tight">
+            Bridge AI
+          </h1>
+          <p className="text-zinc-600 mt-2">
+            Transform raw JSON into beautiful dashboards instantly.
+          </p>
+        </div>
+
+        <Card className="backdrop-blur-sm bg-white/80 shadow-xl">
+          {/* <CardHeader>
+            <CardTitle className="text-2xl text-center">
+              Bridge AI - Instant Dashboard
+            </CardTitle>
+          </CardHeader> */}
+
+          <CardContent className="space-y-6">
+
+            <div>
+              <label className="block mb-2 font-medium">
+                JSON Input
+              </label>
+              <Textarea
+                placeholder="Paste your JSON data here..."
+                className="min-h-[200px] font-mono"
+                value={jsonInput}
+                onChange={(e) => setJsonInput(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="block mb-2 font-medium">
+                Dashboard Description
+              </label>
+              <Input
+                placeholder="Describe how you want the dashboard..."
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+              />
+            </div>
+
+            {error && (
+              <p className="text-red-500 text-sm">{error}</p>
+            )}
+            <div className="flex justify-center">
+              <Button size="lg" className="px-8" onClick={handleGenerate}>
+                Generate Dashboard
+              </Button>
+
+            </div>
+
+
+          </CardContent>
+        </Card>
+
+        {htmlOutput && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Preview</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <iframe
+                srcDoc={htmlOutput}
+                className="w-full h-[500px] border rounded-md bg-white"
+              />
+            </CardContent>
+          </Card>
+        )}
+
+      </div>
+    </main>
   );
 }
