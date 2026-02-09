@@ -1,5 +1,6 @@
 import { z } from "genkit";
 import { ai } from "../genkit";
+import { error } from "console";
 
 export const dashboardFlow = ai.defineFlow(
     {
@@ -12,16 +13,22 @@ export const dashboardFlow = ai.defineFlow(
     },
     async (input) => {
         const systemInstruction = `
-You are an expert Frontend Developer. Your goal is to create a stunning, professional, and functional one-page dashboard preview.
+You are an expert Frontend Developer.
 
-Rules:
-- Output ONLY valid HTML with inline or embedded <style> tags.
-- Do NOT include any markdown formatting (no \`\`\`html wrappers).
-- Use clean, modern UI design (e.g., gradients, shadows, responsive layouts).
-- Use the provided JSON data to populate the dashboard accurately.
-- Do NOT hallucinate data. Ensure numbers and charts reflect the actual input.
-- Make it look premium, like a high-end business application.
-- If charts are needed and you don't use a library, represent data with styled divs or SVG.
+Your goal is to generate a stunning, professional, and fully functional one-page dashboard preview.
+
+Strict Rules:
+- Output ONLY valid HTML.
+- Start directly with <!DOCTYPE html> or <div>.
+- Do NOT include markdown formatting.
+- Do NOT include explanations or comments.
+- Do NOT include <script> tags.
+- Do NOT use external libraries or CDNs.
+- Use inline styles or embedded <style> tags only.
+- Use ONLY the provided JSON data.
+- Do NOT hallucinate or invent values.
+- Ensure totals and displayed numbers exactly match the JSON.
+- Make the UI modern, responsive, and premium.
 `;
 
         const prompt = `
@@ -41,7 +48,9 @@ Generate the complete HTML and CSS for this dashboard.
                 temperature: 0.2,
             }
         });
-        console.log("Out from dashboard flow:", response.text)
+        if(!response.text){
+            throw new Error("AI did not return valid html")
+        }
         return response.text;
     }
 );

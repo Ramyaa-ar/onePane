@@ -1,17 +1,23 @@
 # Bridge AI - Instant Dashboard Generator
 
-A simple web application that acts as a "bridge" between raw data (JSON) and a visual interface. It uses an AI model (Google Gemini) to instantly generate a functional, one-page dashboard preview.
+Bridge AI is a web application that transforms raw JSON data into a functional, one-page dashboard using AI. It acts as a bridge between structured data and a visual interface by leveraging Google Gemini to generate production-ready HTML/CSS in real time.
+
 
 ## Features
+
 - **JSON Input**: Provide any structured raw data.
 - **Natural Language Prompting**: Describe how you want the dashboard to look.
 - **Instant Preview**: View the generated dashboard in a secure iframe.
 - **Modern UI**: Built with Next.js and Tailwind CSS for a premium experience.
 
+
 ## Tech Stack
+
 - **Frontend**: Next.js (App Router), React, Tailwind CSS.
 - **Backend**: Next.js API Routes.
-- **AI**: [Google Gemini 2.5 Flash](https://ai.google.dev/).
+- **AI**: Google Gemini 2.5 Flash.
+- **Language**: TypeScript
+
 
 ## Getting Started
 
@@ -76,9 +82,3 @@ This project is ready for submission and includes:
 - Comprehensive README with setup instructions
 - Working implementation with Google Gemini AI API
 
-## Evaluation Criteria Met
-
-✅ **Clarity**: Clean, well-organized TypeScript code with proper separation of concerns
-✅ **Prompt Accuracy**: AI instructed to use only provided JSON data, prevents hallucination
-✅ **Error Handling**: Robust JSON validation and API error handling
-✅ **Functional Preview**: Secure iframe rendering with sandbox protection

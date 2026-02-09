@@ -23,9 +23,14 @@ export async function POST(req: Request) {
     }
 
     const html = await dashboardFlow({ jsonData: parsedData, userPrompt: prompt });
-    console.log("Out from route:",html)
+    if (!html || typeof html !== "string") {
+      return NextResponse.json(
+        { error: "AI did not return valid HTML." },
+        { status: 500 }
+      );
+    }
     return NextResponse.json({ html });
-  } catch (err : any) {
+  } catch (err: any) {
     console.error("Generation error:", err);
     return NextResponse.json(
       { error: "Something went wrong" },

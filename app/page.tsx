@@ -16,6 +16,7 @@ export default function Home() {
   const handleGenerate = async () => {
     try {
       setError("");
+      setHtmlOutput("");
       setLoading(true);
       if (!jsonInput.trim()) throw new Error("Please provide JSON data.");
       JSON.parse(jsonInput);
@@ -102,21 +103,29 @@ export default function Home() {
 
           </CardContent>
         </Card>
-
-        {htmlOutput && (
           <Card>
             <CardHeader>
               <CardTitle>Preview</CardTitle>
             </CardHeader>
             <CardContent>
-              <iframe
-                sandbox=""
-                srcDoc={htmlOutput}
-                className="w-full h-[500px] border rounded-md bg-white"
-              />
+              {loading ? (
+                <div className="flex items-center justify-center h-[500px]">
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                </div>
+              ) : htmlOutput ? (
+                <iframe
+                  sandbox=""
+                  srcDoc={htmlOutput}
+                  className="w-full h-[500px] border rounded-md bg-white"
+                />
+              ) : (
+                <div className="flex items-center justify-center h-[500px] text-zinc-500">
+                  Your generated dashboard will appear here.
+                </div>
+              )}
             </CardContent>
           </Card>
-        )}
+        
 
       </div>
     </main>
