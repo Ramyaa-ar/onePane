@@ -23,11 +23,12 @@ export async function POST(req: Request) {
     }
 
     const html = await dashboardFlow({ jsonData: parsedData, userPrompt: prompt });
+    console.log("Out from route:",html)
     return NextResponse.json({ html });
-  } catch (err) {
+  } catch (err : any) {
     console.error("Generation error:", err);
     return NextResponse.json(
-      { error: "Something went wrong." },
+      { error: "Something went wrong" },
       { status: 500 }
     );
   }

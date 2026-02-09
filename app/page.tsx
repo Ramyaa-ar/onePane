@@ -4,35 +4,43 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Loader2 } from "lucide-react";
 
 
-export default  function Home() {
+export default function Home() {
   const [jsonInput, setJsonInput] = useState("");
   const [prompt, setPrompt] = useState("");
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [htmlOutput, setHtmlOutput] = useState("");
   const handleGenerate = async () => {
     try {
       setError("");
+      setLoading(true);
+      if (!jsonInput.trim()) throw new Error("Please provide JSON data.");
       JSON.parse(jsonInput);
 
-      const res = await fetch("/api/generate",{
+      const res = await fetch("/api/generate", {
         method: "POST",
-        headers:{
+        headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ jsonInput, prompt }),
       })
       const data = await res.json();
       if (!res.ok) {
-      throw new Error(data.error);
-    }
+        throw new Error(data.error);
+      }
 
-    setHtmlOutput(data.html);
-    } catch (error:any) {
+      setHtmlOutput(data.html);
+    } catch (error: any) {
       setError(error.message);
     }
+    finally {
+      setLoading(false);
+    }
   };
+
   return (
     <main className="min-h-screen bg-zinc-100 p-8">
       <div className="max-w-5xl mx-auto space-y-8">
@@ -46,11 +54,7 @@ export default  function Home() {
         </div>
 
         <Card className="backdrop-blur-sm bg-white/80 shadow-xl">
-          {/* <CardHeader>
-            <CardTitle className="text-2xl text-center">
-              Bridge AI - Instant Dashboard
-            </CardTitle>
-          </CardHeader> */}
+
 
           <CardContent className="space-y-6">
 
@@ -81,9 +85,17 @@ export default  function Home() {
               <p className="text-red-500 text-sm">{error}</p>
             )}
             <div className="flex justify-center">
-              <Button size="lg" className="px-8" onClick={handleGenerate}>
-                Generate Dashboard
+              <Button size="lg" className="px-8" onClick={handleGenerate} disabled={loading}>
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Generating...
+                  </span>
+                ) : (
+                  "Generate Dashboard"
+                )}
               </Button>
+
 
             </div>
 
@@ -98,6 +110,7 @@ export default  function Home() {
             </CardHeader>
             <CardContent>
               <iframe
+                sandbox=""
                 srcDoc={htmlOutput}
                 className="w-full h-[500px] border rounded-md bg-white"
               />
